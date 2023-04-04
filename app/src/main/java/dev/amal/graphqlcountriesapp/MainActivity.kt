@@ -3,41 +3,28 @@ package dev.amal.graphqlcountriesapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import dev.amal.graphqlcountriesapp.presentation.CountriesScreen
+import dev.amal.graphqlcountriesapp.presentation.CountriesViewModel
 import dev.amal.graphqlcountriesapp.ui.theme.GraphQlCountriesAppTheme
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             GraphQlCountriesAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+                val viewModel = hiltViewModel<CountriesViewModel>()
+                val state by viewModel.state.collectAsState()
+                CountriesScreen(
+                    state = state,
+                    onSelectCountry = viewModel::selectCountry,
+                    onDismissCountryDialog = viewModel::dismissCountryDialog
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    GraphQlCountriesAppTheme {
-        Greeting("Android")
     }
 }
